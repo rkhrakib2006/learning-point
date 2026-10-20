@@ -16,7 +16,7 @@ export async function registerUser(data: any) {
 export async function loginUser(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email: email.toLowerCase() } });
   if (!user) throw Object.assign(new Error('Invalid credentials'), { status: 401 });
-  if (!user.isActive) throw Object.assign(new Error('Account disabled'), { status: 403 });
+  if (!user.isActive) throw Object.assign(new Error('Account disabled or pending approval'), { status: 403 });
   if (user.lockedUntil && user.lockedUntil > new Date()) throw Object.assign(new Error('Account locked'), { status: 423 });
 
   const ok = await comparePassword(password, user.passwordHash);
@@ -31,8 +31,19 @@ export async function loginUser(email: string, password: string) {
 
   await prisma.user.update({ where: { id: user.id }, data: { failedLogins: 0, lockedUntil: null } });
   const payload = { sub: user.id, role: user.role as any, cls: user.classLevel ?? undefined };
+  
   return {
-    access: signAccess(payload), refresh: signRefresh(payload),
-    user: { id: user.id, email: user.email, role: user.role, fullName: user.fullName, classLevel: user.classLevel, isAccessUnlocked: user.isAccessUnlocked, allowedAccessCode: user.allowedAccessCode },
+    access: signAccess(payload), 
+    refresh: signRefresh(payload),
+    user: { 
+      id: user.id, 
+      email: user.email, 
+      role: user.role, 
+      fullName: user.fullName, 
+      classLevel: user.classLevel, 
+      isActive: user.isActive, // 👈 এই লাইনটি যোগ করা হলো
+      isAccessUnlocked: user.isAccessUnlocked, 
+      allowedAccessCode: user.allowedAccessCode 
+    },
   };
 }
