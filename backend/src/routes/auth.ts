@@ -1,40 +1,35 @@
 import { Router } from 'express';
 import { prisma } from '../config/db.js';
 import { registerUser, loginUser } from '../services/authService.js';
-import { verifyRefresh, signAccess, signRefresh } from '../utils/jwt.js';
+import { verifyRefresh, signAccess } from '../utils/jwt.js';
 import { authLimiter } from '../middleware/rateLimit.js';
 import { registerSchema, loginSchema } from '../validators/authValidators.js';
 import { requireAuth } from '../middleware/auth.js';
 
 export const authRouter = Router();
 
-// ১. রেজিস্ট্রেশন (এখন অ্যাকাউন্ট Pending থাকবে, সরাসরি লগইন করা যাবে না)
 authRouter.post('/register', authLimiter, async (req, res, next) => {
   try {
     const data = registerSchema.parse(req.body);
     const user = await registerUser(data);
-    // isActive: false করা হলো যাতে অ্যাডমিন Approve করা ছাড়া লগইন না হয়
     await prisma.user.update({ where: { id: user.id }, data: { isActive: false } });
     res.status(201).json({ message: 'Registration successful. Wait for Admin approval.' });
   } catch (e) { next(e); }
 });
 
-// ২. লগইন
 authRouter.post('/login', authLimiter, async (req, res, next) => {
   try {
     const { email, password } = loginSchema.parse(req.body);
     const { access, refresh, user } = await loginUser(email, password);
-    
-    if (!user.isActive) {
-      return res.status(403).json({ error: 'Account pending approval. Contact Admin.' });
-    }
 
-    res.cookie('refresh', refresh, { httpOnly: true, sameSite: 'none', secure: true, maxAge: 30 * 24 * 3600 * 1000, path: '/api/auth' });
+    res.cookie('refresh', refresh, { 
+      httpOnly: true, sameSite: 'none', secure: true, 
+      maxAge: 30 * 24 * 3600 * 1000, path: '/api/auth' 
+    });
     res.json({ access, user });
   } catch (e) { next(e); }
 });
 
-// ৩. অ্যাডমিনের দেওয়া কোড ভেরিফাই করা
 authRouter.post('/verify-access', requireAuth, async (req, res, next) => {
   try {
     const { code } = req.body;
