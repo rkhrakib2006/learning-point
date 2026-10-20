@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  TEACHER
+  ADMIN
+}
+
+enum ExamType {
+  MCQ
+  CQ
+  MIXED
+}
+
+enum SubmissionStatus {
+  IN_PROGRESS
+  SUBMITTED
+  AUTO_SUBMITTED
+  EVALUATED
+  PUBLISHED
+}
+
+model User {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  passwordHash      String
+  fullName          String
+  role              Role      @default(STUDENT)
+  classLevel        Int?
+  school            String?
+  isActive          Boolean   @default(true)
+  failedLogins      Int       @default(0)
+  lockedUntil       DateTime?
+  allowedAccessCode String?
+  isAccessUnlocked  Boolean   @default(false)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  createdExams      Exam[]    @relation("TeacherExams")
+  submissions       Submission[]
+  alerts            Alert[]
+  
+  @@index([role, classLevel])
+}
+
+model Exam {
+  id              String    @id @default(cuid())
+  title           String
+  type            ExamType
+  classLevel      Int
+  durationMin     Int
+  mcqDurationMin  Int       @default(0)
+  cqDurationMin   Int       @default(0)
+  totalMarks      Int
+  passMarks       Int
+  startAt         DateTime
+  endAt           DateTime
+  published       Boolean   @default(false)
+  teacherId       String
+  teacher         User      @relation("TeacherExams", fields: [teacherId], references: [id])
+  
+  questions       Question[]
+  submissions     Submission[]
+  createdAt       DateTime  @default(now())
+
+  @@index([classLevel, published, startAt])
+}
+
+model Question {
+  id           String    @id @default(cuid())
+  examId       String
+  exam         Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  order        Int
+  type         ExamType
+  text         String
+  marks        Int
+  options      Json?
+  correctKey   String?
+  modelAnswer  String?
+  
+  answers      Answer[]
+
+  @@unique([examId, order])
+}
+
+model Submission {
+  id             String            @id @default(cuid())
+  examId         String
+  exam           Exam              @relation(fields: [examId], references: [id], onDelete: Cascade)
+  studentId      String
+  student        User              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  attemptNo      Int               @default(1)
+  status         SubmissionStatus  @default(IN_PROGRESS)
+  startedAt      DateTime          @default(now())
+  submittedAt    DateTime?
+  mcqEndsAt      DateTime?
+  cqEndsAt       DateTime?
+  mcqSubmitted   Boolean           @default(false)
+  cqSubmitted    Boolean           @default(false)
+  mcqScore       Float?            @default(0)
+  cqScore        Float?            @default(0)
+  totalScore     Float?
+  grade          String?
+  passed         Boolean?
+  
+  answers        Answer[]
+  alerts         Alert[]
+
+  @@unique([examId, studentId, attemptNo])
+}
+
+model Answer {
+  id            String      @id @default(cuid())
+  submissionId  String
+  submission    Submission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  questionId    String
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  mcqChoice     String?
+  cqText        String?
+  cqMarks       Float?
+  cqFeedback    String?
+  answeredAt    DateTime    @default(now())
+
+  @@unique([submissionId, questionId])
+}
+
+model Alert {
+  id            String      @id @default(cuid())
+  submissionId  String
+  submission    Submission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  userId        String
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind          String
+  detail        String?
+  occurredAt    DateTime    @default(now())
+
+  @@index([submissionId, kind])
+}
