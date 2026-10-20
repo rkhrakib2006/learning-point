@@ -26,7 +26,7 @@ export default function ExamRoom() {
       data.answers.forEach((a: any) => { initial[a.questionId] = { questionId: a.questionId, mcqChoice: a.mcqChoice, cqText: a.cqText }; });
       setAnswers(initial); setLoading(false);
     }).catch((e) => { alert(e?.response?.data?.error ?? 'Failed to start exam'); nav('/'); });
-  }, [examId]);
+  }, [examId, nav]);
 
   useAntiCheat(submissionId);
   useAutosave(submissionId, answers);
@@ -50,7 +50,7 @@ export default function ExamRoom() {
       </div>
       <div className="max-w-4xl mx-auto p-6">
         {questions.map((q, i) => (
-          <QuestionCard key={q.id} index={i} question={q} value={answers[q.id]?.mcqChoice ?? answers[q.id]?.cqText ?? ''} onChange={(v) => setAnswer(q.id, v)} />
+          <QuestionCard key={q.id} index={i} question={q} value={answers[q.id]?.mcqChoice ?? answers[q.id]?.cqText ?? ''} onChange={(v: any) => setAnswer(q.id, v)} />
         ))}
       </div>
       <div className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 p-4 flex justify-end gap-3">
