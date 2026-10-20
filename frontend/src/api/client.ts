@@ -1,11 +1,13 @@
 import axios from 'axios';
 
-// TypeScript কে জানানোর জন্য
-interface ImportMetaEnv {
-  readonly VITE_API_URL: string;
-}
-interface ImportMeta {
-  readonly env: ImportMetaEnv;
+// Vercel-এ TypeScript error এড়াতে এই ডিক্লেয়ারেশনটি প্রয়োজন
+declare global {
+  interface ImportMetaEnv {
+    readonly VITE_API_URL: string;
+  }
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
 }
 
 export const api = axios.create({
