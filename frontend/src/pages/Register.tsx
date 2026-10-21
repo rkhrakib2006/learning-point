@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { Mail, Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, GraduationCap, BarChart3 } from 'lucide-react';
+import { Mail, Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck } from 'lucide-react';
 import Logo from '../components/Logo';
 
 export default function Register() {
@@ -28,140 +28,87 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex bg-white font-sans">
+    <div className="min-h-screen relative flex items-center justify-center bg-[#020D08] overflow-hidden p-4 py-10">
       
-      {/* বাম দিকের হিরো সেকশন */}
-      <div className="hidden lg:flex w-1/2 relative bg-[#0B0F19] flex-col justify-between p-16 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -left-40 w-96 h-96 bg-purple-600/30 rounded-full blur-[120px]" />
-          <div className="absolute bottom-0 right-0 w-full h-1/2 bg-gradient-to-t from-purple-900/50 to-transparent rounded-t-[100%] transform translate-y-20" />
+      {/* Background Liquid Glow Effects */}
+      <div className="absolute top-[-20%] right-[-10%] w-[60vw] h-[60vw] bg-teal-600/20 rounded-full blur-[140px] animate-pulse" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-emerald-500/20 rounded-full blur-[140px] animate-pulse" style={{ animationDelay: '2s' }} />
+      
+      <div className="relative z-10 w-full max-w-[440px] bg-[#04140E]/60 backdrop-blur-2xl border border-emerald-500/30 rounded-[2.5rem] p-10 shadow-[0_0_50px_rgba(16,185,129,0.15)] animate-slide-up">
+        
+        <div className="flex flex-col items-center mb-8">
+          <div className="w-20 h-20 mb-4 rounded-3xl overflow-hidden shadow-[0_0_30px_rgba(16,185,129,0.3)] bg-black/50 p-1 border border-emerald-500/20">
+            <Logo className="w-full h-full object-contain rounded-2xl" />
+          </div>
+          <p className="text-sm text-emerald-100/60 font-medium">Create your Learning Point account</p>
         </div>
 
-        <div className="relative z-10">
-          <div className="flex items-center gap-3 mb-16">
-            <Logo className="w-12 h-12 drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]" />
-            <div>
-              <h1 className="text-xl font-bold text-white flex items-center gap-1">Learning <span className="text-purple-400">Point</span></h1>
-              <p className="text-[10px] text-slate-400 tracking-[0.2em] uppercase mt-0.5">Learn . Practice . Grow</p>
+        <form onSubmit={handle} className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-emerald-50 mb-1.5">Full Name</label>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500/70" />
+              <input className="w-full pl-12 pr-4 py-3 bg-[#082119]/80 border border-emerald-800/50 rounded-xl text-white placeholder-emerald-700/50 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all font-medium" placeholder="Enter full name" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
             </div>
           </div>
 
           <div>
-            <p className="text-purple-400 tracking-[0.3em] uppercase text-xs font-bold mb-4">Join Us Today</p>
-            <h2 className="text-6xl font-bold text-white leading-tight mb-6">
-              Start Your <br/>
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-blue-400">Journey</span>
-            </h2>
-            <p className="text-lg text-slate-400 max-w-md">Create an account and unlock a world of knowledge and opportunities.</p>
-          </div>
-
-          <div className="flex gap-8 mt-16">
-            <div className="flex flex-col items-center gap-2 text-slate-400"><GraduationCap className="w-6 h-6 text-purple-500" /><span className="text-xs font-medium">MCQ + CQ Exams</span></div>
-            <div className="flex flex-col items-center gap-2 text-slate-400"><BarChart3 className="w-6 h-6 text-purple-500" /><span className="text-xs font-medium">Track Progress</span></div>
-            <div className="flex flex-col items-center gap-2 text-slate-400"><ShieldCheck className="w-6 h-6 text-purple-500" /><span className="text-xs font-medium">Safe & Secure</span></div>
-          </div>
-        </div>
-
-        <div className="relative z-10 text-slate-500 text-sm flex items-center gap-3 font-medium">
-          <div className="w-8 h-0.5 bg-purple-500 rounded-full" />
-          Small Steps, Big Dreams
-        </div>
-      </div>
-
-      {/* ডান দিকের ফর্ম সেকশন */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-slate-50 relative py-12">
-        <Link to="/" className="absolute top-8 right-12 text-slate-500 hover:text-slate-900 flex items-center gap-2 text-sm font-semibold transition-colors">
-          Back to Home <ArrowRight className="w-4 h-4" />
-        </Link>
-
-        <div className="w-full max-w-md bg-white rounded-[2rem] p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-slate-100">
-          
-          <div className="flex flex-col items-center mb-8 lg:hidden">
-            <Logo className="w-16 h-16 mb-4" />
-            <h2 className="text-2xl font-bold text-slate-800">Learning Point</h2>
-          </div>
-
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl mb-8">
-            <Link to="/login" className="flex-1 text-slate-500 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 hover:text-slate-800 transition-colors">
-              Login
-            </Link>
-            <button className="flex-1 bg-white text-purple-600 py-2.5 rounded-xl text-sm font-bold shadow-sm transition-all flex items-center justify-center gap-2">
-              Sign Up
-            </button>
-          </div>
-
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-slate-800">Create Account</h2>
-            <p className="text-sm text-slate-500 mt-2">Join Learning Point today</p>
-          </div>
-
-          <form onSubmit={handle} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Full Name</label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all font-medium" placeholder="Enter your full name" value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} required />
-              </div>
+            <label className="block text-sm font-semibold text-emerald-50 mb-1.5">Email</label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500/70" />
+              <input className="w-full pl-12 pr-4 py-3 bg-[#082119]/80 border border-emerald-800/50 rounded-xl text-white placeholder-emerald-700/50 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all font-medium" type="email" placeholder="Enter email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
             </div>
+          </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Email Address</label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all font-medium" type="email" placeholder="Enter your email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-              </div>
+          <div>
+            <label className="block text-sm font-semibold text-emerald-50 mb-1.5">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-emerald-500/70" />
+              <input className="w-full pl-12 pr-12 py-3 bg-[#082119]/80 border border-emerald-800/50 rounded-xl text-white placeholder-emerald-700/50 focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400 transition-all font-medium" type={showPass ? 'text' : 'password'} placeholder="Create a password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
+              <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-emerald-500/70 hover:text-emerald-300 transition-colors">
+                {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
             </div>
+          </div>
 
+          <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                <input className="w-full pl-12 pr-12 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all font-medium" type={showPass ? 'text' : 'password'} placeholder="Create a password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
-                <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 transition-colors">
-                  {showPass ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
+              <label className="block text-sm font-semibold text-emerald-50 mb-1.5">Role</label>
+              <select className="w-full px-4 py-3 bg-[#082119]/80 border border-emerald-800/50 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-all font-medium" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as any })}>
+                <option value="STUDENT">Student</option>
+                <option value="TEACHER">Teacher</option>
+              </select>
             </div>
-
-            <div className="grid grid-cols-2 gap-4">
+            {form.role === 'STUDENT' && (
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Role</label>
-                <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value as any })}>
-                  <option value="STUDENT">Student</option>
-                  <option value="TEACHER">Teacher</option>
+                <label className="block text-sm font-semibold text-emerald-50 mb-1.5">Class</label>
+                <select className="w-full px-4 py-3 bg-[#082119]/80 border border-emerald-800/50 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-all font-medium" value={form.classLevel} onChange={(e) => setForm({ ...form, classLevel: Number(e.target.value) })}>
+                  {[8, 9, 10, 11, 12].map((c) => <option key={c} value={c}>Class {c}</option>)}
                 </select>
               </div>
-              {form.role === 'STUDENT' && (
-                <div>
-                  <label className="block text-xs font-bold text-slate-600 mb-1.5 uppercase tracking-wide">Class</label>
-                  <select className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 font-medium" value={form.classLevel} onChange={(e) => setForm({ ...form, classLevel: Number(e.target.value) })}>
-                    {[8, 9, 10, 11, 12].map((c) => <option key={c} value={c}>Class {c}</option>)}
-                  </select>
-                </div>
-              )}
-            </div>
-
-            {err && <div className="p-3 rounded-xl bg-red-50 text-red-600 text-sm font-bold border border-red-100">{err}</div>}
-
-            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:shadow-lg hover:shadow-purple-500/30 transition-all mt-2">
-              {loading ? 'Creating Account...' : <> Sign Up <ArrowRight className="w-5 h-5" /> </>}
-            </button>
-          </form>
-
-          <div className="my-6 flex items-center gap-4">
-            <div className="flex-1 h-px bg-slate-200"></div>
-            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">OR</span>
-            <div className="flex-1 h-px bg-slate-200"></div>
+            )}
           </div>
 
-          <button type="button" className="w-full bg-white border border-slate-200 text-slate-700 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 hover:bg-slate-50 transition-colors shadow-sm">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" /> Sign up with Google
-          </button>
+          {err && (
+            <div className="flex items-center gap-2 p-3 rounded-xl bg-red-900/20 text-red-400 text-sm font-medium border border-red-500/30">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+              {err}
+            </div>
+          )}
 
-          <p className="text-center text-sm text-slate-500 mt-6 font-medium">
-            Already have an account? <Link to="/login" className="text-purple-600 font-bold hover:underline">Login</Link>
-          </p>
+          <button type="submit" disabled={loading} className="w-full relative group overflow-hidden bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-[0_0_20px_rgba(16,185,129,0.4)] hover:shadow-[0_0_30px_rgba(16,185,129,0.6)] mt-2">
+            <span className="absolute inset-0 w-full h-full bg-white/20 group-hover:translate-x-full transition-transform duration-500 ease-out skew-x-12 -translate-x-full"></span>
+            {loading ? 'Creating...' : <> <ArrowRight className="w-5 h-5" /> Sign Up </>}
+          </button>
+        </form>
+
+        <div className="mt-6 flex items-center justify-center gap-2 text-xs text-emerald-500/50">
+          <ShieldCheck className="w-4 h-4" /> Secure Registration
         </div>
+
+        <p className="text-center text-sm text-emerald-100/50 mt-4">
+          Already have an account? <Link to="/login" className="text-emerald-400 font-semibold hover:text-emerald-300 hover:underline transition-colors">Login</Link>
+        </p>
       </div>
     </div>
   );
